@@ -1,29 +1,32 @@
+// routes.tsx
 import { createBrowserRouter } from 'react-router-dom';
 import App from './App';
-import Login from './pages/login/login.tsx';
-import Home from './pages/home/home.tsx';
-import ProtectedRoute from './components/atoms/ProtectedRoute.tsx';
+import SignUpPage from './pages/login/login'; // this is your sign-up page
+import Home from './pages/home/home';
+import ProtectedRoute from './components/atoms/ProtectedRoute';
+
 const router = createBrowserRouter([
   {
     path: '/',
-    element: <App />,
+    element: <App />, 
     children: [
       {
-        path: 'login',
-        element: <Login />,
+        path: '',
+        element: <SignUpPage />, 
       },
       {
-        path: '',
-        element: <ProtectedRoute />,
-        children: [
-          {
-            path: 'home',
-            element: <Home />,
-          },
-        ],
+        path: 'home',
+        element: (
+          <ProtectedRoute>
+            <Home />
+          </ProtectedRoute>
+        ),
       },
     ],
   },
 ]);
 
 export default router;
+
+
+

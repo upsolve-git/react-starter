@@ -12,9 +12,14 @@
     "isolatedModules": true,
     "noEmit": true,
     "jsx": "react-jsx",
-    "baseUrl": "./",
+    "baseUrl": "./src",
     "paths": {
-      "@/*": ["./src/*"]
+      "@components/*": ["components/*"],
+      "@constants/*": ["constants/*"],
+      "@services/*": ["services/*"],
+      "@stores/*": ["stores/*"],
+      "@validations/*": ["validations/*"],
+      "@interfaces/*": ["interfaces/*"]
     },
     "types": ["vite/client"],
     "allowJs": true,

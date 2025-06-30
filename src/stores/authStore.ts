@@ -1,30 +1,55 @@
-// src/stores/authStore.ts
 import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
 
-interface User {
-  email: string;
-  name: string;
+/**
+ * Auth Store State Schema
+ */
+export interface State {
+  accessToken: string | null;
+  refreshToken: string | null;
+  isAuthenticated: boolean;
 }
 
-interface AuthState {
-  user: User | null;
-  isAuthenticated: boolean;
-  login: (email: string, password: string) => Promise<void>;
+/**
+ * Auth Store Actions Schema
+ */
+export interface Actions {
+  setAccessToken: (accessToken: string | null) => void;
+  setRefreshToken: (refreshToken: string | null) => void;
+  setIsAuthenticated: (isAuthenticated: boolean) => void;
   logout: () => void;
 }
 
-const useAuthStore = create<AuthState>((set) => ({
-  user: null,
-  isAuthenticated: false,
-
-  login: async (email, password) => {
-    // Authentication logic
-    set({ user: { email, name: 'User' }, isAuthenticated: true });
-  },
-
-  logout: () => {
-    set({ user: null, isAuthenticated: false });
-  },
-}));
-
-export default useAuthStore;  // Must use default export
+/**
+ * Zustand Persisted Auth Store for email/password authentication
+ */
+export const useAuthStore = create(
+  persist<State & Actions>(
+    (set) => ({
+      accessToken: null,
+      refreshToken: null,
+      isAuthenticated: false,
+      setAccessToken: (accessToken: string | null) =>
+        set(() => ({
+          accessToken,
+        })),
+      setIsAuthenticated: (isAuthenticated: boolean) =>
+        set(() => ({
+          isAuthenticated,
+        })),
+      setRefreshToken: (refreshToken: string | null) =>
+        set(() => ({
+          refreshToken,
+        })),
+      logout: () =>
+        set(() => ({
+          accessToken: null,
+          refreshToken: null,
+          isAuthenticated: false,
+        })),
+    }),
+    {
+      name: 'auth-store',
+    }
+  )
+);

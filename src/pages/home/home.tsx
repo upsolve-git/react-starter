@@ -1,9 +1,8 @@
-import useAuthStore from '@/stores/authStore';
-
+import { useAuthStore } from '@stores/authStore';
 
 const Home = () => {
   const { logout } = useAuthStore();
-  
+
   return (
     <div className="min-h-screen bg-gray-100">
       <nav className="bg-white shadow-sm">
@@ -23,9 +22,15 @@ const Home = () => {
           </div>
         </div>
       </nav>
+
       <div className="py-10">
         <div className="max-w-7xl mx-auto px-4">
-          {/* Page content */}
+          <h2 className="text-2xl font-semibold text-gray-800">
+            🎉 Welcome to the Home Page!
+          </h2>
+          <p className="text-gray-600 mt-2">
+            You’ve successfully signed up !!.
+          </p>
         </div>
       </div>
     </div>
