@@ -29,14 +29,18 @@ export default ({ mode }: { mode: string }) => {
         '@services': path.resolve(__dirname, './src/services'),
         '@stores': path.resolve(__dirname, './src/stores'),
         '@routes': path.resolve(__dirname, './src/routes'),
-        '@validations': path.resolve(__dirname, './src/validations')
-      }
+        '@validations': path.resolve(__dirname, './src/validations'),
+        '@interface': path.resolve(__dirname, './src/interface'),
+      } 
     },
     server: {
-      host: true,
-      strictPort: true,
-      port: parseInt(env.VITE_PORT || '5173', 10),
-    },
+  proxy: {
+    '/api': {
+      target: 'http://localhost:8000', // Ensure this matches Django's port
+      changeOrigin: true,
+    }
+  }
+},
     preview: {
       host: true,
       strictPort: true,

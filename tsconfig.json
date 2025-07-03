@@ -19,7 +19,7 @@
       "@services/*": ["services/*"],
       "@stores/*": ["stores/*"],
       "@validations/*": ["validations/*"],
-      "@interfaces/*": ["interfaces/*"]
+      "@interface/*": ["interface/*"],
     },
     "types": ["vite/client"],
     "allowJs": true,

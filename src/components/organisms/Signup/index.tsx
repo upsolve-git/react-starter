@@ -1,6 +1,6 @@
 import { useState, type FC } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { FieldValues, FormProvider, useForm } from 'react-hook-form';
+import { FormProvider, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 
 import Button from '@components/atoms/FormButton';
@@ -8,46 +8,54 @@ import Input from '@components/atoms/Forminput';
 import ErrorMessage from '@components/atoms/errorPage';
 
 import { routes } from '@constants/routes.ui';
-import { signUpSchema } from '@validations/auth';
+import { signUpSchema, TSignUpSchema } from '@validations/auth';
 import { useAuthStore } from '@stores/authStore';
-
-interface SignUpResponse {
-  username: string;
-  fullName: string;
-}
+import { signUp } from  '@interface/api/auth';
 
 const SignUpForm: FC = () => {
-  const formMethods = useForm({
+  const formMethods = useForm<TSignUpSchema>({
     resolver: zodResolver(signUpSchema),
   });
 
   const isLoading = formMethods.formState.isSubmitting;
   const navigate = useNavigate();
 
-  const setIsAuthenticated = useAuthStore((state) => state.setIsAuthenticated); // ✅ proper hook
+  // Get all needed store actions
+  const {
+    isAuthenticated,
+    setAccessToken,
+    setUser,
+    setError: setStoreError,
+  } = useAuthStore();
+
   const [formError, setFormError] = useState('');
   const [hasFormError, setHasFormError] = useState(false);
 
-  const onSubmit = async (data: FieldValues) => {
+  const onSubmit = async (data: TSignUpSchema) => {
     try {
-      // Simulate mock response
-      const mockResponse: SignUpResponse = {
-        username: data.email,
-        fullName: `${data.firstName || ''} ${data.lastName || ''}`.trim(),
-      };
-
-      console.log('Sign up successful:', mockResponse);
-
-     
-      setIsAuthenticated(true);
       setFormError('');
       setHasFormError(false);
+      setStoreError(null);
 
-    
+      // Call API
+      const response = await signUp(data);
+
+      // Update store
+      setAccessToken(response.token);
+      setUser({
+        email: response.email,
+        firstName: response.firstName,
+        lastName: response.lastName,
+      });
+      setIsAuthenticated(true);
+
+      // Redirect
       navigate(routes.home);
     } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Sign-up failed';
+      setFormError(errorMessage);
+      setStoreError(errorMessage);
       setHasFormError(true);
-      setFormError('An error occurred during sign up');
     }
   };
 
@@ -74,7 +82,27 @@ const SignUpForm: FC = () => {
             placeholder="Create a password"
             hasFormError={hasFormError}
           />
-
+          <Input
+            label="First Name"
+            type="text"
+            name="firstName"
+            placeholder="Your first name"
+            hasFormError={hasFormError}
+          />
+          <Input
+            label="Last Name"
+            type="text"
+            name="lastName"
+            placeholder="Your last name"
+            hasFormError={hasFormError}
+          />
+          <Input
+             label="Phone Number"
+             type="text"
+             name="phoneNumber"
+             placeholder="Your phone number"
+             hasFormError={hasFormError}
+/>
           <Button variant="secondary" isLoading={isLoading} className="mt-4">
             Create Account
           </Button>

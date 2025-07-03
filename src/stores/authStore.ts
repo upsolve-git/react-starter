@@ -1,52 +1,49 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
-/**
- * Auth Store State Schema
- */
-export interface State {
+interface UserData {
+  email: string | null;
+  firstName?: string | null; // Optional if your app uses it
+  lastName?: string | null;
+}
+
+interface AuthState {
   accessToken: string | null;
   refreshToken: string | null;
   isAuthenticated: boolean;
+  user: UserData | null;
+  error: string | null;
 }
 
-/**
- * Auth Store Actions Schema
- */
-export interface Actions {
-  setAccessToken: (accessToken: string | null) => void;
-  setRefreshToken: (refreshToken: string | null) => void;
-  setIsAuthenticated: (isAuthenticated: boolean) => void;
+interface AuthActions {
+  setAccessToken: (token: string | null) => void;
+  setUser: (user: UserData | null) => void;
+  setError: (error: string | null) => void;
   logout: () => void;
 }
 
-/**
- * Zustand Persisted Auth Store for email/password authentication
- */
-export const useAuthStore = create(
-  persist<State & Actions>(
+export const useAuthStore = create<AuthState & AuthActions>()(
+  persist(
     (set) => ({
       accessToken: null,
       refreshToken: null,
       isAuthenticated: false,
-      setAccessToken: (accessToken: string | null) =>
-        set(() => ({
-          accessToken,
-        })),
-      setIsAuthenticated: (isAuthenticated: boolean) =>
-        set(() => ({
-          isAuthenticated,
-        })),
-      setRefreshToken: (refreshToken: string | null) =>
-        set(() => ({
-          refreshToken,
-        })),
-      logout: () =>
-        set(() => ({
-          accessToken: null,
-          refreshToken: null,
-          isAuthenticated: false,
-        })),
+      user: null,
+      error: null,
+
+      // Setters
+      setAccessToken: (token) => set({ accessToken: token, isAuthenticated: !!token }),
+      setUser: (user) => set({ user }),
+      setError: (error) => set({ error }),
+      
+      // Logout clears everything
+      logout: () => set({ 
+        accessToken: null,
+        refreshToken: null,
+        isAuthenticated: false,
+        user: null,
+        error: null
+      }),
     }),
     {
       name: 'auth-store',
