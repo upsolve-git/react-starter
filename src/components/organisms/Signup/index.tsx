@@ -26,6 +26,7 @@ const SignUpForm: FC = () => {
     setAccessToken,
     setUser,
     setError: setStoreError,
+    setIsAuthenticated,
   } = useAuthStore();
 
   const [formError, setFormError] = useState('');

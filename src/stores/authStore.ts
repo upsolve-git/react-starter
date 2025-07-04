@@ -19,6 +19,7 @@ interface AuthActions {
   setAccessToken: (token: string | null) => void;
   setUser: (user: UserData | null) => void;
   setError: (error: string | null) => void;
+  setIsAuthenticated: (value: boolean) => void;
   logout: () => void;
 }
 
@@ -34,6 +35,7 @@ export const useAuthStore = create<AuthState & AuthActions>()(
       // Setters
       setAccessToken: (token) => set({ accessToken: token, isAuthenticated: !!token }),
       setUser: (user) => set({ user }),
+      setIsAuthenticated: (value) => set({ isAuthenticated: value }),
       setError: (error) => set({ error }),
       
       // Logout clears everything
